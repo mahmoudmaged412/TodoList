@@ -1,25 +1,34 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ChangeEvent, FormEvent } from 'react';
 
-function TodoForm(props) {
+interface TodoFormProps {
+  edit?: { id: number | null; value: string };
+  onSubmit: (todo: { id: number; text: string }) => void;
+}
+
+const TodoForm: React.FC<TodoFormProps> = (props) => {
   const [input, setInput] = useState(props.edit ? props.edit.value : '');
 
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    inputRef.current.focus();
-  });
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
-  const handleChange = e => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    props.onSubmit({
-      id: Math.floor(Math.random() * 10000),
-      text: input
-    });
+    if (props.onSubmit) {
+      props.onSubmit({
+        id: props.edit ? props.edit.id || Math.floor(Math.random() * 10000) : Math.floor(Math.random() * 10000),
+        text: input,
+      });
+    }
     setInput('');
   };
 
@@ -56,6 +65,6 @@ function TodoForm(props) {
       )}
     </form>
   );
-}
+};
 
 export default TodoForm;
