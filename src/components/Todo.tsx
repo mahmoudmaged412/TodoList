@@ -1,56 +1,41 @@
-import React, { useState } from 'react';
-import TodoForm from './TodoForm';
-import { RiCloseCircleLine } from 'react-icons/ri';
-import { TiEdit } from 'react-icons/ti';
+// Todo.tsx
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { completeTodo, removeTodo, updateTodo } from '../todoSlice'; // Adjust the import based on your reducer actions
 
 interface TodoProps {
   todos: { id: number; text: string; isComplete: boolean }[];
-  completeTodo: (id: number) => void;
-  removeTodo: (id: number) => void;
-  updateTodo: (id: number, value: string) => void;
 }
 
-const Todo: React.FC<TodoProps> = ({ todos, completeTodo, removeTodo, updateTodo }) => {
-  const [edit, setEdit] = useState({
-    id: null as number | null,
-    value: '',
-  });
+const Todo: React.FC<TodoProps> = ({ todos }) => {
+  const dispatch = useDispatch();
 
-  const submitUpdate = (value: string) => {
-    if (edit.id !== null) {
-      updateTodo(edit.id, value);
-      setEdit({
-        id: null,
-        value: '',
-      });
-    }
-  };
-
-  if (edit.id !== null) {
-    // Update the following line to pass an object with the correct structure
-    return <TodoForm edit={edit} onSubmit={(todo) => submitUpdate(todo.text)} />;
-  }
-
-  return todos.map((todo, index) => (
-    <div
-      className={todo.isComplete ? 'todo-row complete' : 'todo-row'}
-      key={index}
-    >
-      <div key={todo.id} onClick={() => completeTodo(todo.id)}>
-        {todo.text}
-      </div>
-      <div className='icons'>
-        <RiCloseCircleLine
-          onClick={() => removeTodo(todo.id)}
-          className='delete-icon'
-        />
-        <TiEdit
-          onClick={() => setEdit({ id: todo.id, value: todo.text })}
-          className='edit-icon'
-        />
-      </div>
+  return (
+    <div>
+      {todos.map((todo) => (
+        <div key={todo.id} className={todo.isComplete ? 'todo-row complete' : 'todo-row'}>
+          <div onClick={() => dispatch(completeTodo(todo.id))}>{todo.text}</div>
+          <div className='icons'>
+            <button onClick={() => dispatch(removeTodo(todo.id))} className='delete-icon'>
+              Remove
+            </button>
+            {/* Assuming there is an updateTodo action that requires the new text */}
+            <button
+              onClick={() => {
+                const newText = prompt('Enter new text for the todo:', todo.text);
+                if (newText !== null) {
+                  dispatch(updateTodo({ id: todo.id, text: newText }));
+                }
+              }}
+              className='edit-icon'
+            >
+              Edit
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
-  ));
+  );
 };
 
 export default Todo;

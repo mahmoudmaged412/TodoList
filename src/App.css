@@ -140,8 +140,24 @@ h1 {
 .delete-icon {
   margin-right: 5px;
   color: #fff;
+  border: none;
+  cursor: pointer;
+
+  background: linear-gradient(
+    90deg,
+    rgba(93, 12, 255, 1) 0%,
+    rgba(155, 0, 250, 1) 100%
+  );
 }
 
 .edit-icon {
   color: #fff;
+  border: none;
+  cursor: pointer;
+
+  background: linear-gradient(
+    90deg,
+    rgba(93, 12, 255, 1) 0%,
+    rgba(155, 0, 250, 1) 100%
+  );
 }

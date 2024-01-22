@@ -1,66 +1,27 @@
-import React, { useState } from 'react';
+// TodoList.tsx
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../store';
+import { addTodo } from '../todoSlice';
 import TodoForm from './TodoForm';
 import Todo from './Todo';
 
-interface TodoItem {
-  id: number;
-  text: string;
-  isComplete: boolean;
-}
-
 function TodoList() {
-  const [todos, setTodos] = useState<TodoItem[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const todos = useSelector((state: RootState) => state.todos.todos);
 
-  const addTodo = (todo: { text: string }) => {
-    if (!todo.text || /^\s*$/.test(todo.text)) {
-      return;
-    }
-
-    const newTodos: TodoItem[] = [
-      { id: Math.floor(Math.random() * 10000), text: todo.text, isComplete: false },
-      ...todos,
-    ];
-
-    setTodos(newTodos);
+  const handleAddTodo = (text: string) => {
+    dispatch(addTodo(text));
   };
 
-  const updateTodo = (todoId: number, newValue: { text: string }) => {
-    if (!newValue.text || /^\s*$/.test(newValue.text)) {
-      return;
-    }
-
-    setTodos((prev) =>
-      prev.map((item) => (item.id === todoId ? { ...item, text: newValue.text } : item))
-    );
-  };
-
-  const removeTodo = (id: number) => {
-    const removedArr: TodoItem[] = todos.filter((todo) => todo.id !== id);
-    setTodos(removedArr);
-  };
-
-  const completeTodo = (id: number) => {
-    let updatedTodos: TodoItem[] = todos.map((todo) => {
-      if (todo.id === id) {
-        todo.isComplete = !todo.isComplete;
-      }
-      return todo;
-    });
-    setTodos(updatedTodos);
-  };
+  // Add other handlers as needed
 
   return (
-    <>
+    <div>
       <h1>What's the Plan for Today?</h1>
-      <TodoForm onSubmit={addTodo} />
-      <Todo
-        todos={todos}
-        completeTodo={completeTodo}
-        removeTodo={removeTodo}
-        // Adjust the updateTodo function to match the expected type
-        updateTodo={(id, value) => updateTodo(id, { text: value })}
-      />
-    </>
+      <TodoForm onSubmit={handleAddTodo} />
+      <Todo todos={todos} />
+    </div>
   );
 }
 
