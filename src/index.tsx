@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import '../src/App.css'; // Ensure correct path to your CSS file
+import '../src/App.css';
 import { Provider } from 'react-redux';
 import store from './store';
 
